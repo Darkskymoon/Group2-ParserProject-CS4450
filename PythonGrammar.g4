@@ -1,9 +1,13 @@
 grammar PythonGrammar;
 
+program: Assignment EOF;
+Expression: ('+'|'-'|'*'|'/'|'%') ValidParam;
 
-expression: expression ('+'|'-'|'*'|'/'|'%') expression
-    | ([0-9]+|variableName) ;
+ValidParam: ([0-9]+|VarName);
+Expression2: ValidParam Expression;
 
-assignment: variableName ('='|'+''='|'-''='|'*''='|'/''=') expression '\n';
+Assignment: VarName ('='|'+''='|'-''='|'*''='|'/''=') Expression2 '\n';
 
-variableName: ([a-zA-Z]|_)+([a-zA-Z]|[1-9]|_)*;
+
+ 
+VarName: ([a-z]|[A-Z]|'_')+([a-z]|[A-Z]|[1-9]|'_')*;
