@@ -1,15 +1,19 @@
 import sys
 from antlr4 import *
-from PythonGrammar import PythonGrammarLexer
-from PythonGrammar import PythonGrammarParser
+from PythonGrammarLexer import PythonGrammarLexer
+from PythonGrammarParser import PythonGrammarParser
 
 
-def main():
-    if(len(sys.argv) == 1)
+def main(argv):
+    if len(sys.argv) > 1:
+        inputFile = FileStream(sys.argv[1])
+
         #much of the following is taken from the TinyCCode example on canvas
-        lexer = PythonGrammarLexer(sys.argv[0])
+        lexer = PythonGrammarLexer(inputFile)
         stream = CommonTokenStream(lexer)
         parser = PythonGrammarParser(stream)
+        tree = parser.program()
+        print(tree.toStringTree(recog=parser))
 
         if(parser.getNumberOfSyntaxErrors()>0):
             print("The python file is INVALID")
@@ -19,3 +23,5 @@ def main():
     else:
         print("Please provide 1 argument for the file to test!")
 
+if __name__ == '__main__':
+    main(sys.argv)
