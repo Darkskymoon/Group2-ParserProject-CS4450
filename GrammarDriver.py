@@ -13,9 +13,11 @@ def main():
 
         if(parser.getNumberOfSyntaxErrors()>0):
             print("The python file is INVALID")
-            print(f"There were {parser.getNumberOfSyntaxErrors()}")
+            print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
         else:
             print("The python file is VALID")
+            print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
+
     else:
         print("Invalid command try \"python3 GrammarDriver.py project_deliverable_1.py\"")
 

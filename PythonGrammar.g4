@@ -3,10 +3,18 @@ grammar PythonGrammar;
 program: Assignment EOF;
 Expression: ('+'|'-'|'*'|'/'|'%') ValidParam;
 
-ValidParam: ([0-9]+|VarName);
-Expression2: ValidParam Expression;
+Expression2: ValidParam (Expression)*;
 
-Assignment: VarName ('='|'+''='|'-''='|'*''='|'/''=') Expression2 '\n';
+Float: [0-9]+'.'*[0-9]+;
+Integer: [0-9]+;
+String:'"'[\u0000-\u00ff]*'"';
+Array: VarName'['[0-9]+']';
+ArrayAssignmentParams: '['ValidParam']';
+Bool: 'True'|'False';
+ValidParam: (Integer|VarName|Float|String|Array);
+
+
+Assignment: VarName ('='|'+''='|'-''='|'*''='|'/''=') Expression2 | VarName '=' Bool| VarName '=' ArrayAssignmentParams;
 
 
  
