@@ -1,13 +1,13 @@
 import sys
 from antlr4 import *
-from PythonGrammar import PythonGrammarLexer
-from PythonGrammar import PythonGrammarParser
+from PythonGrammarLexer import PythonGrammarLexer
+from PythonGrammarParser import PythonGrammarParser
 
 
 def main():
-    if(len(sys.argv) == 1)
+    if(len(sys.argv) == 2):
         #much of the following is taken from the TinyCCode example on canvas
-        lexer = PythonGrammarLexer(sys.argv[0])
+        lexer = PythonGrammarLexer(FileStream(sys.argv[1]))
         stream = CommonTokenStream(lexer)
         parser = PythonGrammarParser(stream)
 
@@ -17,5 +17,7 @@ def main():
         else:
             print("The python file is VALID")
     else:
-        print("Please provide 1 argument for the file to test!")
+        print("Invalid command try \"python3 GrammarDriver.py project_deliverable_1.py\"")
 
+
+main()

@@ -1,0 +1,15 @@
+## Ignore antlr
+antlr-4.13.2-complete.jar
+
+#ignore __pycache__/
+__pycache__/
+
+##ignore interp
+*.interp
+
+##ignore tokens
+*.tokens
+
+PythonGrammarLexer.py
+PythonGrammarListener.py
+PythonGrammarParser.py
