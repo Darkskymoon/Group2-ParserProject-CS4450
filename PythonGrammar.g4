@@ -1,21 +1,57 @@
 grammar PythonGrammar;
 
-program: Assignment EOF;
-Expression: ('+'|'-'|'*'|'/'|'%') ValidParam;
+program: (statement Newline*)* EOF;
 
-Expression2: ValidParam (Expression)*;
+Newline
+    : '\r'?'\n';
 
-Float: [0-9]+'.'*[0-9]+;
-Integer: [0-9]+;
-String:'"'[\u0000-\u00ff]*'"';
-Array: VarName'['[0-9]+']';
-ArrayAssignmentParams: '['ValidParam']';
-Bool: 'True'|'False';
-ValidParam: (Integer|VarName|Float|String|Array);
+statement
+    : assignment 
+    | expression;
 
+assignment
+    : VarName assignmentOperator expression;
 
-Assignment: VarName ('='|'+''='|'-''='|'*''='|'/''=') Expression2 | VarName '=' Bool| VarName '=' ArrayAssignmentParams;
+operator
+    : PLUS | MINUS | MULT | DIV | MOD;
 
+expression
+    : validParam (operator expression)?;
 
+String
+    : '"' [a-zA-Z0-9_]* '"'   
+    | '\'' [a-zA-Z0-9_]* '\'';   
+
+Number
+    : [0-9]+ ('.'[0-9]*)?;
+
+Bool
+    : 'True'
+    | 'False';
+
+validParam
+    : Number
+    | VarName
+    | String 
+    | Bool
+    | '[' validParam (',' validParam)* ']';
+
+assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
  
-VarName: ([a-z]|[A-Z]|'_')+([a-z]|[A-Z]|[1-9]|'_')*;
+VarName
+    : [a-zA-Z_] [a-zA-Z0-9_]*;
+
+WS
+    :	[ \t]+ -> skip;
+
+PLUS          : '+';
+MINUS         : '-';
+MULT          : '*';
+DIV           : '/';
+MOD           : '%';
+
+ASSIGN        : '=';
+PLUS_ASSIGN   : '+=';
+MINUS_ASSIGN  : '-=';
+MULT_ASSIGN   : '*=';
+DIV_ASSIGN    : '/=';
