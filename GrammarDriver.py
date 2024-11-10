@@ -12,7 +12,7 @@ def main():
         parser = PythonGrammarParser(stream)
         tree =parser.program()
 
-
+        # print(tree.toStringTree(recog=parser))
         if(parser.getNumberOfSyntaxErrors()>0):
             print("The python file is INVALID")
             # print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
