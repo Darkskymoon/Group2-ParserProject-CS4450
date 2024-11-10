@@ -10,13 +10,15 @@ def main():
         lexer = PythonGrammarLexer(FileStream(sys.argv[1]))
         stream = CommonTokenStream(lexer)
         parser = PythonGrammarParser(stream)
+        tree =parser.program()
+
 
         if(parser.getNumberOfSyntaxErrors()>0):
             print("The python file is INVALID")
-            print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
+            # print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
         else:
             print("The python file is VALID")
-            print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
+            # print(f"There were {parser.getNumberOfSyntaxErrors()} errors")
 
     else:
         print("Invalid command try \"python3 GrammarDriver.py project_deliverable_1.py\"")
