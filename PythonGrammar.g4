@@ -25,7 +25,7 @@ String
     | '\'' [a-zA-Z0-9_ ]* '\'';   
 
 Number
-    : [0-9]+ ('.'[0-9]*)?;
+    : ('-')?[0-9]+ ('.'[0-9]*)?;
 
 Bool
     : 'True'
@@ -46,7 +46,7 @@ VarName
     : [a-zA-Z_] [a-zA-Z0-9_]*;
 
 WS
-    :	[ \t]+ -> skip;
+    :	[ \r\t]+ -> skip;
 
 PLUS          : '+';
 MINUS         : '-';
@@ -69,10 +69,16 @@ GREATER_THAN_OR_EQUAL_TO  : '>=';
 
 AND           : ' and ';
 OR            : ' or ';
-NOT           : ' not ';
+NOT           : 'not ';
 
 conditional
-    : (validParam) conditionalOperator (validParam)
-    | validParam conditionalOperator validParam ((AND | OR) validParam conditionalOperator validParam)* ;
+    : validParam conditionalOperator validParam
+    | validParam conditionalOperator validParam ((AND | OR) validParam conditionalOperator validParam)* 
+    | NOT (conditional | validParam) ((AND | OR) conditional)* 
+    | '(' conditional ')' ((AND | OR) conditional)*;
+
 if
-    : 'if' conditional ':' (Newline* '\t' statement)*;
+    : 'if' conditional ':' (Newline* '\t' statement)* 
+    (Newline* 'elif' conditional ':' (Newline* '\t' statement)* )* 
+    (Newline* 'else:' (Newline* '\t' statement)* )? WS*;
+
