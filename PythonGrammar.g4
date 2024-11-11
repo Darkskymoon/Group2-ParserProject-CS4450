@@ -77,8 +77,11 @@ conditional
     | NOT (conditional | validParam) ((AND | OR) conditional)* 
     | '(' conditional ')' ((AND | OR) conditional)*;
 
+indented_statement
+    : Newline* '\t' statement;
+
 if
-    : 'if' conditional ':' (Newline* '\t' statement)* 
-    (Newline* 'elif' conditional ':' (Newline* '\t' statement)* )* 
-    (Newline* 'else:' (Newline* '\t' statement)* )? WS*;
+    : 'if' conditional ':' (indented_statement)* 
+    (Newline* 'elif' conditional ':' (indented_statement)* )* 
+    (Newline* 'else:' (indented_statement)* )? WS*;
 
