@@ -67,12 +67,12 @@ NOT_EQUAL_TO  : '!=';
 LESS_THAN_OR_EQUAL_TO  : '<=';
 GREATER_THAN_OR_EQUAL_TO  : '>=';
 
-AND           : 'and';
-OR            : 'or';
+AND           : ' and ';
+OR            : ' or ';
+NOT           : ' not ';
 
 conditional
     : (validParam) conditionalOperator (validParam)
-    | Bool
     | validParam conditionalOperator validParam ((AND | OR) validParam conditionalOperator validParam)* ;
 if
     : 'if' conditional ':' (Newline* '\t' statement)*;
