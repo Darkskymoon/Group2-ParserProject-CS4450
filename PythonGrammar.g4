@@ -40,7 +40,7 @@ validParam
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
 
-conditionalOperator: LESS_THAN | GREATER_THAN | EQUAL_TO | NOT_EQUAL_TO | LESS_THAN_OR_EQUAL_TO | GREATER_THAN_OR_EQUAL_TO | AND | OR;
+conditionalOperator: LESS_THAN | GREATER_THAN | EQUAL_TO | NOT_EQUAL_TO | LESS_THAN_OR_EQUAL_TO | GREATER_THAN_OR_EQUAL_TO;
  
 VarName
     : [a-zA-Z_] [a-zA-Z0-9_]*;
@@ -66,10 +66,13 @@ EQUAL_TO      : '==';
 NOT_EQUAL_TO  : '!=';
 LESS_THAN_OR_EQUAL_TO  : '<=';
 GREATER_THAN_OR_EQUAL_TO  : '>=';
+
 AND           : 'and';
 OR            : 'or';
 
 conditional
-    : (validParam) conditionalOperator (validParam | conditional);
+    : (validParam) conditionalOperator (validParam)
+    | Bool
+    | validParam conditionalOperator validParam ((AND | OR) validParam conditionalOperator validParam)* ;
 if
     : 'if' conditional ':' (Newline* '\t' statement)*;
