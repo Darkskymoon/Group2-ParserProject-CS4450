@@ -71,11 +71,18 @@ AND           : ' and ';
 OR            : ' or ';
 NOT           : 'not ';
 
+comparable
+    : validParam
+    | Bool
+    | NOT comparable;
+
+comparison
+    : comparable conditionalOperator comparable
+    | NOT? '(' comparison ')'
+    | comparable; 
+
 conditional
-    : validParam conditionalOperator validParam
-    | validParam conditionalOperator validParam ((AND | OR) validParam conditionalOperator validParam)* 
-    | NOT (conditional | validParam) ((AND | OR) conditional)* 
-    | '(' conditional ')' ((AND | OR) conditional)*;
+    : comparison ((AND | OR) comparison)*;
 
 indented_statement
     : Newline* '\t' statement;
