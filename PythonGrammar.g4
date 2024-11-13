@@ -9,6 +9,7 @@ statement
     : assignment 
     | expression
     | conditional
+    | Newline
     | if;
 
 assignment
@@ -46,7 +47,7 @@ VarName
     : [a-zA-Z_] [a-zA-Z0-9_]*;
 
 WS
-    :	[ \r\t]+ -> skip;
+    :	[ \r]+ -> skip;
 
 PLUS          : '+';
 MINUS         : '-';
@@ -88,7 +89,14 @@ indented_statement
     : Newline* '\t' statement;
 
 if
-    : 'if' conditional ':' (indented_statement)* 
-    (Newline* 'elif' conditional ':' (indented_statement)* )* 
-    (Newline* 'else:' (indented_statement)* )? WS*;
+    : Newline? 'if' conditional ':' (indented_statement)* 
+    (Newline+ elif)* 
+    (Newline+ else)?;
+
+elif
+    : 'elif' conditional ':' (indented_statement)*;
+
+else
+    : 'else:' (indented_statement)*;
+
 
