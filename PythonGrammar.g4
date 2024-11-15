@@ -10,7 +10,8 @@ statement
     | expression
     | conditional
     | Newline
-    | if;
+    | if
+    | SingleLineComment;
 
 assignment
     : VarName assignmentOperator expression;
@@ -38,6 +39,9 @@ validParam
     | String 
     | Bool
     | '[' validParam (',' validParam)* ']';
+
+SingleLineComment
+    : '#' [a-zA-Z0-9_ ]*;
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
 
