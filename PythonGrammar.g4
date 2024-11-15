@@ -11,6 +11,7 @@ statement
     | conditional
     | Newline
     | if
+    | for
     | SingleLineComment;
 
 assignment
@@ -103,4 +104,6 @@ elif
 else
     : 'else:' (indented_statement)*;
 
-
+for
+    :'for ' String ' in' String  ':' (indented_statement)*
+    |'for ' String ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
