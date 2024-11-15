@@ -11,7 +11,7 @@ statement
     | conditional
     | Newline
     | if
-    | for
+    | loop
     | SingleLineComment;
 
 assignment
@@ -104,6 +104,13 @@ elif
 else
     : 'else:' (indented_statement)*;
 
+loop
+    : for
+    | while;
 for
     :'for ' String ' in' String  ':' (indented_statement)*
     |'for ' String ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
+
+
+while
+    : 'while ' conditional ':' (indented_statement)*;
