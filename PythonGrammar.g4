@@ -12,7 +12,7 @@ statement
     | Newline
     | if
     | loop
-    | SingleLineComment;
+    | comment;
 
 assignment
     : VarName assignmentOperator expression;
@@ -24,8 +24,8 @@ expression
     : validParam (operator expression)?;
 
 String
-    : '"' [a-zA-Z0-9_ ]* '"'   
-    | '\'' [a-zA-Z0-9_ ]* '\'';   
+    : '"' ([a-zA-Z0-9_ ]|'!'|[#-/])* '"'   
+    | '\'' ([a-zA-Z0-9_ ]|[!-&]|[*-/])* '\'';   
 
 Number
     : ('-')?[0-9]+ ('.'[0-9]*)?;
@@ -41,8 +41,14 @@ validParam
     | Bool
     | '[' validParam (',' validParam)* ']';
 
+comment
+    : SingleLineComment
+    | MultiLineComment;
 SingleLineComment
     : '#' [a-zA-Z0-9_ ]*;
+MultiLineComment
+    : WS* '\'' '\'' '\'' ((Newline|WS)|([a-zA-Z0-9_ ]|[!-/]))*  '\'' '\'' '\'' ;
+
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
 
