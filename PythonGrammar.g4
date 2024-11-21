@@ -44,10 +44,14 @@ validParam
 comment
     : SingleLineComment
     | MultiLineComment;
+
 SingleLineComment
     : '#' [a-zA-Z0-9_ ]*;
-MultiLineComment
-    : WS* '\'' '\'' '\'' ((Newline|WS)|([a-zA-Z0-9_ ]|[!-/]))*  '\'' '\'' '\'' ;
+
+//Uses code from: https://stackoverflow.com/questions/12898052/antlr-how-to-skip-multiline-comments
+MultiLineComment 
+    : '\'\'\'' .*? '\'\'\'' ;
+    //: '\'\'\'' ((Newline|[a-zA-Z0-9_ ]|[!-/]))*? '\'\'\'' ;
 
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
@@ -114,8 +118,8 @@ loop
     : for
     | while;
 for
-    :'for ' String ' in' String  ':' (indented_statement)*
-    |'for ' String ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
+    :'for ' VarName ' in' VarName  ':' (indented_statement)*
+    |'for ' VarName ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
 
 
 while
