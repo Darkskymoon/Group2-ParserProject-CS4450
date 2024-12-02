@@ -104,7 +104,7 @@ conditional
     : comparison ((AND | OR) comparison)*;
 
 indented_block
-    : INDENT statement+ DEDENT;
+    : INDENT statement+ DEDENT NEWLINE*;
 
 if
     : 'if' conditional ':' indented_block (elif)* (else)?;
@@ -119,7 +119,9 @@ loop
     : for
     | while;
 
-for: 'for ' VarName 'in' (VarName | 'range' '(' Number ',' Number ')')  ':' indented_block;
+for
+    :'for ' VarName ' in' VarName  ':' indented_block
+    |'for ' VarName ' in range' '(' Number ',' Number')' ':' indented_block;
 
 while
     : 'while' conditional ':' indented_block;
