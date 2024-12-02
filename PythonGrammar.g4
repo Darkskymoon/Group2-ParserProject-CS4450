@@ -1,15 +1,18 @@
 grammar PythonGrammar;
 
-program: (statement Newline*)* EOF;
+INDENT  : '\t';  // Tab for indentation
+DEDENT  : '<DEDENT>'; // Dedentation placeholder
 
-Newline
+program: (statement NEWLINE*)* EOF;
+
+NEWLINE
     : '\r'?'\n';
 
 statement
     : assignment 
     | expression
     | conditional
-    | Newline
+    | NEWLINE
     | if
     | loop
     | comment;
@@ -51,7 +54,7 @@ SingleLineComment
 //Uses code from: https://stackoverflow.com/questions/12898052/antlr-how-to-skip-multiline-comments
 MultiLineComment 
     : '\'\'\'' .*? '\'\'\'' ;
-    //: '\'\'\'' ((Newline|[a-zA-Z0-9_ ]|[!-/]))*? '\'\'\'' ;
+    //: '\'\'\'' ((NEWLINE|[a-zA-Z0-9_ ]|[!-/]))*? '\'\'\'' ;
 
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
@@ -62,7 +65,7 @@ VarName
     : [a-zA-Z_] [a-zA-Z0-9_]*;
 
 WS
-    :	[ \r]+ -> skip;
+    :	[ ]+ -> skip;
 
 PLUS          : '+';
 MINUS         : '-';
@@ -100,27 +103,23 @@ comparison
 conditional
     : comparison ((AND | OR) comparison)*;
 
-indented_statement
-    : Newline* '\t' statement;
+indented_block
+    : INDENT statement+ DEDENT;
 
 if
-    : Newline? 'if' conditional ':' (indented_statement)* 
-    (Newline+ elif)* 
-    (Newline+ else)?;
+    : 'if' conditional ':' indented_block (elif)* (else)?;
 
 elif
-    : 'elif' conditional ':' (indented_statement)*;
+    : 'elif' conditional ':' indented_block;
 
 else
-    : 'else:' (indented_statement)*;
+    : 'else:' indented_block;
 
 loop
     : for
     | while;
-for
-    :'for ' VarName ' in' VarName  ':' (indented_statement)*
-    |'for ' VarName ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
 
+for: 'for ' VarName 'in' (VarName | 'range' '(' Number ',' Number ')')  ':' indented_block;
 
 while
-    : 'while ' conditional ':' (indented_statement)*;
+    : 'while' conditional ':' indented_block;

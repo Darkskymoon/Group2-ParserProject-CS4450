@@ -1,16 +1,16 @@
 import sys
 from antlr4 import *
-from PythonGrammarLexer import PythonGrammarLexer
+from PythonIndentationLexer import PythonIndentationLexer
 from PythonGrammarParser import PythonGrammarParser
-
+from antlr4 import InputStream
 
 def main():
     if(len(sys.argv) == 2):
-        #much of the following is taken from the TinyCCode example on canvas
-        lexer = PythonGrammarLexer(FileStream(sys.argv[1]))
+        # much of the following is taken from the TinyCCode example on canvas
+        lexer = PythonIndentationLexer(FileStream(sys.argv[1]))
         stream = CommonTokenStream(lexer)
         parser = PythonGrammarParser(stream)
-        tree =parser.program()
+        tree = parser.program()
 
         # print(tree.toStringTree(recog=parser))
         if(parser.getNumberOfSyntaxErrors()>0):
