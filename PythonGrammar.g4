@@ -24,7 +24,8 @@ operator
     : PLUS | MINUS | MULT | DIV | MOD;
 
 expression
-    : validParam (operator expression)?;
+    : expression operator validParam 
+    | validParam;
 
 String
     : '"' ([a-zA-Z0-9_ ]|'!'|[#-/])* '"'   
@@ -101,7 +102,8 @@ comparison
     | comparable; 
 
 conditional
-    : comparison ((AND | OR) comparison)*;
+    : comparison (AND | OR) comparison
+    | comparison;
 
 indented_block
     : INDENT statement+ DEDENT NEWLINE*;
