@@ -4,6 +4,8 @@ from PythonIndentationLexer import PythonIndentationLexer
 from PythonGrammarParser import PythonGrammarParser
 from graphviz import Digraph
 
+from graphviz import Digraph
+
 def create_parse_tree_graph(tree, parser, output_file='parse_tree'):
     """
     Create a graphical representation of the parse tree
@@ -14,26 +16,22 @@ def create_parse_tree_graph(tree, parser, output_file='parse_tree'):
     - output_file: Base name for output files
     """
     dot = Digraph(comment='Parse Tree', 
-                  node_attr={'shape': 'box', 'style': 'filled', 'fillcolor': 'lightblue'})
-
-    def get_token_name(symbol_type):
-        """
-        Get a meaningful name for a token type
-        """
-        # Try literal names first
-        if 0 <= symbol_type < len(parser.literalNames):
-            literal = parser.literalNames[symbol_type]
-            if literal and literal != '<INVALID>':
-                return literal.strip("'")
-        
-        # Then try symbolic names
-        if 0 <= symbol_type < len(parser.symbolicNames):
-            symbolic = parser.symbolicNames[symbol_type]
-            if symbolic and symbolic != '<INVALID>':
-                return symbolic
-        
-        # Fallback
-        return f'Token_{symbol_type}'
+                  node_attr={
+                      'shape': 'box', 
+                      'style': 'filled', 
+                      'fillcolor': 'lightblue'
+                  },
+                  # Add global graph attributes to improve spacing
+                  graph_attr={
+                      'ranksep': '1',  # Vertical spacing between levels
+                      'nodesep': '2',  # Horizontal spacing between nodes
+                      'rankdir': 'TB',   # Top to Bottom layout
+                  },
+                  # Add edge attributes for clearer connections
+                  edge_attr={
+                      'color': 'gray',
+                      'penwidth': '1.5'
+                  })
 
     def format_node_label(node):
         """
@@ -43,19 +41,19 @@ def create_parse_tree_graph(tree, parser, output_file='parse_tree'):
         
         if isinstance(node, TerminalNode):
             symbol = node.getSymbol()
-            token_type = symbol.type
             token_text = symbol.text
             
             # Special handling for EOF
-            if token_type == parser.EOF:
+            if symbol.type == parser.EOF:
                 return 'EOF'
             
-            # Get token name
-            token_name = get_token_name(token_type)
+            # Special handling for newlines
+            if token_text in ['\n', '\r\n']:
+                return 'NEWLINE'
             
             # Clean up and format the label
             clean_text = repr(token_text).strip("'\"")
-            return f"{token_name}: {clean_text}"
+            return clean_text
         
         # For non-terminal nodes, use rule name
         return parser.ruleNames[node.getRuleIndex()]
