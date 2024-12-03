@@ -24,6 +24,17 @@ class PythonIndentationLexer(PythonGrammarLexer):
                 new_indent += 1
                 self._input.consume()
                 
+            # Check for 4-space indentations
+            space_count = 0
+            while self._input.LA(1) == ord(' '):
+                space_count += 1
+                self._input.consume()
+
+            new_indent += space_count // 4
+
+            if space_count % 4 != 0:
+                raise ValueError("Indentation error: spaces not multiple of 4")
+
             # Compare with previous indentation
             current_indent = self.indent_stack[-1] if self.indent_stack else 0
             
