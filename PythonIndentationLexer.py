@@ -20,7 +20,7 @@ class PythonIndentationLexer(PythonGrammarLexer):
         
             # Peek at next characters to check for indentation, consuming indents
             new_indent = 0
-            while self._input.LA(1) == 9:
+            while self._input.LA(1) == ord('\t'):
                 new_indent += 1
                 self._input.consume()
                 
@@ -49,18 +49,6 @@ class PythonIndentationLexer(PythonGrammarLexer):
                 # Create dedent tokens for each previous indent that is greater than the new indent
                 while self.indent_stack and self.indent_stack[-1] > new_indent:
                     self.indent_stack.pop()
-
-                    # Add a NEWLINE token after DEDENT
-                    newline_token = self._factory.create(
-                        self._tokenFactorySourcePair,
-                        self.NEWLINE,
-                        '\n',
-                        self._channel,
-                        token.start,
-                        token.stop,
-                        token.line,
-                        token.column
-                    )
 
                     dedent_token = self._factory.create(
                         self._tokenFactorySourcePair, 
