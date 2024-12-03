@@ -4,7 +4,7 @@ from PythonIndentationLexer import PythonIndentationLexer
 from PythonGrammarParser import PythonGrammarParser
 # from graphviz import Digraph
 
-# Code to create parse tree from ChatGPT
+# # Code to create parse tree from ChatGPT
 
 # def create_parse_tree_graph(tree, parser, output_file='parse_tree'):
 #     """
@@ -46,6 +46,12 @@ from PythonGrammarParser import PythonGrammarParser
 #             # Special handling for EOF
 #             if symbol.type == parser.EOF:
 #                 return 'EOF'
+            
+#             # Special handling for INDENT and DEDENT
+#             if symbol.type == parser.INDENT:
+#                 return 'INDENT'
+#             if symbol.type == parser.DEDENT:
+#                 return 'DEDENT'
             
 #             # Special handling for newlines
 #             if token_text in ['\n', '\r\n']:
