@@ -1,6 +1,8 @@
 grammar PythonGrammar;
 
 
+// INDENT / DEDENT CITATION
+// https://stackoverflow.com/questions/8642154/antlr-what-is-simpliest-way-to-realize-python-like-indent-depending-grammar
 @lexer::members
 {
 # Indent stack starts with 0 indent level
