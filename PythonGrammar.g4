@@ -1,15 +1,113 @@
 grammar PythonGrammar;
 
-program: (statement Newline*)* EOF;
 
-Newline
+@lexer::members
+{
+# Indent stack starts with 0 indent level
+indent_stack = [0]
+
+# Pending INDENT and DEDENT tokens
+pending_tokens = []
+    
+def nextToken(self):
+    # Get the next token
+    token = super().nextToken()
+
+    # Check if this is a NEWLINE token
+    if token.type == self.NEWLINE:
+    
+        # Peek at next characters to check for indentation, consuming indents
+        new_indent = 0
+        while self._input.LA(1) == ord('\t'):
+            new_indent += 1
+            self._input.consume()
+            
+        # Check for 4-space indentations
+        space_count = 0
+        while self._input.LA(1) == ord(' '):
+            space_count += 1
+            self._input.consume()
+
+        new_indent += space_count // 4
+
+        if space_count % 4 != 0:
+            raise ValueError("Indentation error: spaces not multiple of 4")
+
+        # Compare with previous indentation
+        current_indent = self.indent_stack[-1] if self.indent_stack else 0
+        
+        # If indent is greater than current, create an indent tokens
+        if new_indent > current_indent:
+            # Create indent for each tab
+            for i in range(0, new_indent - current_indent):
+                indent_token = self._factory.create(
+                    self._tokenFactorySourcePair, 
+                    self.INDENT, 
+                    ' ' * new_indent, 
+                    self._channel, 
+                    token.start, 
+                    token.stop, 
+                    token.line, 
+                    token.column
+                )
+                self.indent_stack.append(new_indent)
+                self.pending_tokens.append(indent_token)
+        
+        # If new indent is less than current, create a dedent tokens
+        elif new_indent < current_indent:
+            # Create dedent tokens for each previous indent that is greater than the new indent
+            while self.indent_stack and self.indent_stack[-1] > new_indent:
+                self.indent_stack.pop()
+
+                dedent_token = self._factory.create(
+                    self._tokenFactorySourcePair, 
+                    self.DEDENT, 
+                    '', 
+                    self._channel, 
+                    token.start, 
+                    token.stop, 
+                    token.line, 
+                    token.column
+                )
+                
+                self.pending_tokens.append(dedent_token)
+    
+    # Emit dedent tokens if EOF
+    if token.type == Token.EOF:
+        while self.indent_stack and self.indent_stack[-1] > 0:
+            self.indent_stack.pop()
+            dedent_token = self._factory.create(
+                self._tokenFactorySourcePair,
+                self.DEDENT,
+                '',
+                self._channel,
+                token.start,
+                token.stop,
+                token.line,
+                token.column
+            )
+            self.pending_tokens.append(dedent_token)
+    
+    # Append token to pending to ensure it is handled
+    self.pending_tokens.append(token)
+
+    # Return tokens with pending tokens prioritized
+    return self.pending_tokens.pop(0) if self.pending_tokens else token
+}
+
+INDENT  : '\t';  // Tab for indentation
+DEDENT  : '<DEDENT>'; // Dedentation placeholder
+
+program: (statement NEWLINE*)* EOF;
+
+NEWLINE
     : '\r'?'\n';
 
 statement
     : assignment 
     | expression
     | conditional
-    | Newline
+    | NEWLINE
     | if
     | loop
     | comment;
@@ -21,7 +119,8 @@ operator
     : PLUS | MINUS | MULT | DIV | MOD;
 
 expression
-    : validParam (operator expression)?;
+    : expression operator validParam 
+    | validParam;
 
 String
     : '"' ([a-zA-Z0-9_ ]|'!'|[#-/])* '"'   
@@ -51,7 +150,7 @@ SingleLineComment
 //Uses code from: https://stackoverflow.com/questions/12898052/antlr-how-to-skip-multiline-comments
 MultiLineComment 
     : '\'\'\'' .*? '\'\'\'' ;
-    //: '\'\'\'' ((Newline|[a-zA-Z0-9_ ]|[!-/]))*? '\'\'\'' ;
+    //: '\'\'\'' ((NEWLINE|[a-zA-Z0-9_ ]|[!-/]))*? '\'\'\'' ;
 
 
 assignmentOperator: ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN | MULT_ASSIGN | DIV_ASSIGN;
@@ -62,7 +161,7 @@ VarName
     : [a-zA-Z_] [a-zA-Z0-9_]*;
 
 WS
-    :	[ \r]+ -> skip;
+    :	[ ]+ -> skip;
 
 PLUS          : '+';
 MINUS         : '-';
@@ -98,29 +197,28 @@ comparison
     | comparable; 
 
 conditional
-    : comparison ((AND | OR) comparison)*;
+    : comparison (AND | OR) comparison
+    | comparison;
 
-indented_statement
-    : Newline* '\t' statement;
+indented_block
+    : INDENT statement+ DEDENT NEWLINE*;
 
 if
-    : Newline? 'if' conditional ':' (indented_statement)* 
-    (Newline+ elif)* 
-    (Newline+ else)?;
+    : 'if' conditional ':' indented_block (elif)* (else)?;
 
 elif
-    : 'elif' conditional ':' (indented_statement)*;
+    : 'elif' conditional ':' indented_block;
 
 else
-    : 'else:' (indented_statement)*;
+    : 'else:' indented_block;
 
 loop
     : for
     | while;
-for
-    :'for ' VarName ' in' VarName  ':' (indented_statement)*
-    |'for ' VarName ' in range' '(' Number ',' Number')' ':' (indented_statement)*;
 
+for
+    :'for ' VarName ' in' VarName  ':' indented_block
+    |'for ' VarName ' in range' '(' Number ',' Number')' ':' indented_block;
 
 while
-    : 'while ' conditional ':' (indented_statement)*;
+    : 'while' conditional ':' indented_block;
