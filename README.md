@@ -2,19 +2,30 @@
 
 ## Members
 - Zoe Strassner
-- Ryan Wahle
+- Ryan Wahle 
 - George Bahr 
 - John Lin
 
 ## Description
-TODO
+This is Project Group 2's Parser Project for Fall 2024 Principles of Programming Languages. It works as a partial parser for Python. 
+This parser works with:
+- arithmetic operators (+,-,*,/,%)
+- assignment operators (=, +=, -=, *=, /=)
+- if/elif/else blocks
+- Conditional statements(<, <=, >,>=, ==, !=, and, or, and not)
+- while/for loops
+- nested structures
+- comments
+
+It uses Python and Antlr4.
 
 ## Requirements for Parser 
-TODO 
+- Antlr 4
+- Python 3
 
 ## How to use/run
-TODO
+- generate the antlr files: Java -jar ANTLR.JAR -Dlanguage=Python3 PythonGrammar.g4
+- The driver is run with: python3 GrammarDriver.py PythonFileToParseGoesHere
 
 ## Video
-TODO
-
+See canvas submission 
