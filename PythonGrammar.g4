@@ -8,7 +8,8 @@ indent_stack = [0]
 
 # Pending INDENT and DEDENT tokens
 pending_tokens = []
-    
+
+# Override nextToken function to emit INDENT and DEDENT tokens
 def nextToken(self):
     # Get the next token
     token = super().nextToken()
@@ -16,7 +17,7 @@ def nextToken(self):
     # Check if this is a NEWLINE token
     if token.type == self.NEWLINE:
     
-        # Peek at next characters to check for indentation, consuming indents
+        # Check for tab indentations
         new_indent = 0
         while self._input.LA(1) == ord('\t'):
             new_indent += 1
@@ -30,6 +31,7 @@ def nextToken(self):
 
         new_indent += space_count // 4
 
+        # Check for invalid space count
         if space_count % 4 != 0:
             raise ValueError("Indentation error: spaces not multiple of 4")
 
@@ -92,7 +94,7 @@ def nextToken(self):
     self.pending_tokens.append(token)
 
     # Return tokens with pending tokens prioritized
-    return self.pending_tokens.pop(0) if self.pending_tokens else token
+    return self.pending_tokens.pop(0)
 }
 
 INDENT  : '\t';  // Tab for indentation
